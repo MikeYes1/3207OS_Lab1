@@ -6,52 +6,48 @@
 
 int main(int argc, char **argv)
 {
-    struct stat sb; 
-    if (stat("yoo", &sb)!= 0) {
-        perror("stat failed");
-        return 1;
-    }
-    printf("%d\n", S_ISREG(sb.st_mode));
-    
-    return 0;
-    
-    /*
-    
     FILE *fptr, *fptr2;
-    char charHolder;
+    char charHolder; 
     int i = 1;
-    size_t = e;
+    size_t e;
     char buffer[1024];
     struct stat sb; 
-    //struct dirent **directory;
-    
-    int n = stat(const char *restrict path, struct stat *restrict buf);
+    //struct dirent **directory; a relic of a forgotten time
 
     if (stat(argv[argc-1], &sb) == -1) {
         perror("lstat");
         exit(EXIT_FAILURE);
     }
     
-    
-      
     if(S_ISDIR(sb.st_mode)){
     
-        while( i != length(argv) - 2 ){
+        while( i != sizeof(argv) - 2 ){
       
             fptr = fopen(argv[i], "rb");
-                absolute path?
-                NULL check
-             
-            if(getcwd(buffer, sizeof(buffer - strlen(argv[i]))) != NULL){
+            if(fptr == NULL) {
+            printf("Could not locate file\n");
+            exit(-1);
+            }      
+                
+            /*Obtain the name of the current directory, store it in buffer, then append 
+             * the destination directory and the file name to the variable*/
+            if(getcwd(buffer, sizeof(buffer) - strlen(argv[i])) != NULL){
+                strcat(buffer, "/");
+                strcat(buffer, argv[argc-1]);
+                strcat(buffer, "/");
                 strcat(buffer, argv[i]); 
             } else {
                 printf("getcwd() error");
             }
              
             fptr2 = fopen(buffer, "wb");
+            if(fptr2 == NULL) {
+            printf("Could not locate file\n");
+            exit(-1);
+            }  
             
-            while ((e = fread(&charHolder, 1, sizeof(charHolder), fptr)) > 0) {
-                fwrite(charHolder, 1, e, fptr2);
+            while ((e = fread(&charHolder, 1, 1, fptr)) > 0) {
+                fwrite(&charHolder, 1, e, fptr2);
             }
              
             fclose(fptr);
@@ -62,20 +58,28 @@ int main(int argc, char **argv)
     } else {
     
         fptr = fopen(argv[1], "rb");
-            check nulls
+        if(fptr == NULL) {
+        printf("Could not locate file\n");
+        exit(-1);
+        }  
+
         fptr2 = fopen(argv[2], "wb");
+        if(fptr2 == NULL) {
+        printf("Could not locate file\n");
+        exit(-1);
+        }  
         
-        
-        while ((e = fread(&charHolder, 1, sizeof(charHolder), fptr)) > 0) {
-            fwrite(charHolder, 1, e, fptr2);
+        while ((e = fread(&charHolder, 1, 1, fptr)) > 0) {
+            fwrite(&charHolder, 1, e, fptr2);
         }
         
         /* Realized very late that we need to copy actual data of the files, not just
          * text. Went to ChatGPT for some ideas, saw this stucture that uses two
-         * pointers in a while loop with fread and fwrite. *
+         * pointers in a while loop with fread and fwrite. */
         
         fclose(fptr);
         fclose(fptr2);
-
-    */
+    }
+    
+    return 0;
 }
