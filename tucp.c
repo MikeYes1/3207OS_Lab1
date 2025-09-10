@@ -14,6 +14,7 @@ int main(int argc, char **argv)
     struct stat sb; 
     //struct dirent **directory; a relic of a forgotten time
 
+    //thanks man
     if (stat(argv[argc-1], &sb) == -1) {
         perror("lstat");
         exit(EXIT_FAILURE);
@@ -21,7 +22,10 @@ int main(int argc, char **argv)
     
     if(S_ISDIR(sb.st_mode)){
     
-        while( i != sizeof(argv) - 2 ){
+        /*argc is the number of arguments passed through the command line. Since the
+         * directory only shows up at the end (not counting the null at the actual end), I 
+         * just loop the copying for normal files until reaching argc - 1.*/
+        while( i != argc - 1 ){
       
             fptr = fopen(argv[i], "rb");
             if(fptr == NULL) {
@@ -30,8 +34,9 @@ int main(int argc, char **argv)
             }      
                 
             /*Obtain the name of the current directory, store it in buffer, then append 
-             * the destination directory and the file name to the variable*/
-            if(getcwd(buffer, sizeof(buffer) - strlen(argv[i])) != NULL){
+             * the destination directory and the file name to the variable. Hopes that
+             * the user only uses the name of the files and never any path*/
+            if(getcwd(buffer, sizeof(buffer)) != NULL){
                 strcat(buffer, "/");
                 strcat(buffer, argv[argc-1]);
                 strcat(buffer, "/");
@@ -46,6 +51,7 @@ int main(int argc, char **argv)
             exit(-1);
             }  
             
+            //e holds the number of items successfully read, idk why tho this is not my idea
             while ((e = fread(&charHolder, 1, 1, fptr)) > 0) {
                 fwrite(&charHolder, 1, e, fptr2);
             }
